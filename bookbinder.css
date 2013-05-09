@@ -1,0 +1,85 @@
+/* Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+    background: url(textured_paper.png);
+    font-size: 18px;
+    font-family: Georgia, "Helvetica Neue","Trebuchet MS",Helvetica,sans-serif;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+  
+}
+p {
+    margin-top : 18px;
+    line-height: 27px;
+}
+
+
+#warning {
+    width: 300px;
+    margin: 20px;
+    visibility: visible;
+}
+
+#warning-display-off {
+    display: none;
+}
+
+#text-display-off {
+    display: none;
+}
+
+#text {
+    margin-top: 64px;
+
+    padding-left: 29px;
+
+    -moz-column-gap: 32px;
+    -webkit-column-gap: 32px;
+    column-gap: 32px;
+
+    height: 400px;
+    -moz-columns: 300px;
+    -webkit-columns: 300px;
+    columns: 300px;
+}
+
+html {
+    padding-right: 3px;
+}
