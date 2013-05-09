@@ -187,7 +187,6 @@ var bookbinder = (function () {
                 default:
                     break;
             }
-            console.log(keyCode);
             return false;
         };
 
