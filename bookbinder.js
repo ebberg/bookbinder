@@ -100,19 +100,23 @@ var bookbinder = (function () {
 
         b = animations(b);
 
-        b.textWidth = function () {
+        b.getTextWidth = function () {
             return window.scrollMaxX;
         };
 
-        b.textHeight = function () {
+        b.getTextHeight = function () {
             return window.innerHeight;
         };
 
-        b.pageWidth = function () {
+        b.getPageWidth = function () {
             return window.innerWidth;
         };
 
-        b.pageOffset = function () {
+        b.getPageTotal = function () {
+            return Math.floor( (b.getTextWidth() / b.getPageWidth()) + 1);
+        };
+
+        b.getTextOffset = function () {
             // TODO: IE8 support. detect document.body.scrollLeft
             return window.pageXOffset;
         };
@@ -126,7 +130,7 @@ var bookbinder = (function () {
         };
 
         b.changeID = function (before, after) {
-            errorID = document.getElementById(before);
+            var errorID = document.getElementById(before);
             if (errorID !== null) {
                 errorID.setAttribute("id", after);
             } else {
@@ -134,18 +138,8 @@ var bookbinder = (function () {
             }
         };
 
-        b.pageRight = function () {
-            b.shiftHorizontally(b.pageWidth(), "right");
-            // TODO: hook into bookMemory
-        };
-
-        b.pageLeft = function () {
-            b.shiftHorizontally(b.pageWidth(), "left");
-            // TODO: hook into bookMemory
-        };
-
         b.setBookHeight = function () {
-            calculatedHeight = b.textHeight() / 1.25;
+            var calculatedHeight = b.getTextHeight() / 1.25;
             document.getElementById("text").style.height = calculatedHeight + "px";
         }
         
@@ -171,20 +165,17 @@ var bookbinder = (function () {
         b = events(b);
         b = actions(b);
 
-        b.initBook = function () {
-            pageNumber = 1;
-            pagesTotal = b.currentPagesTotal();
-            pageWidth = b.currentPageWidth();
-            return(pageNumber + " out of " + pagesTotal);
+        b.pageRight = function () {
+            b.shiftHorizontally(pageWidth, "right");
+        };
+
+        b.pageLeft = function () {
+            b.shiftHorizontally(pageWidth, "left");
         };
 
         b.showPageInfo = function () {
             // TODO: print out pageNumber of pageTotal in div#pageinfo
             return undefined;
-        };
-
-        b.currentPageTotal = function () {
-            return Math.floor( (b.currentWidth() / b.currentPageWidth()) + 1);
         };
 
         b.currentPageNumber = function () {
@@ -198,22 +189,31 @@ var bookbinder = (function () {
             }
         };
 
-        b.recalculatePages = function () {
-            // TODO
-            var oldPN = pagesNumber,
-                oldPT = pagesTotal,
-                oldPW = pageWidth,
-                newPW = b.currentPageWidth();
+        b.initBook = function () {
+            pageNumber = 1; // PLANNED: store and retrieve from localStorage
+            pageTotal = b.getPageTotal();
+            pageWidth = b.getPageWidth();
+            return(pageNumber + " out of " + pageTotal);
+        };
 
-            //given this info, calculate the new page numbers and page total.
+        b.recalculatePages = function () {
+            var oldPageNumber = pageNumber,
+                oldPageTotal = pageTotal,
+                oldPageWidth = pageWidth,
+                oldTextOffset = textOffset;
+
+            pageWidth = b.getPageWidth();
+            textOffset = b.getTextOffset();
+            // TODO: calculate the new pageNumber and pageTotal.
+
 
             return undefined;
 
         };
 
         b.normalizePage = function () {
-            // * TODO
-            var offset = b.pageOffset(),
+            // TODO
+            var offset = textOffset,
                 width = pageWidth;
 
             // given the offset and the page width, figure out where the page should be
@@ -226,6 +226,7 @@ var bookbinder = (function () {
         b.on('window load', b.toVisibleBook);
         b.on('window load', b.initBook);
         b.on('render the screen', b.setBookHeight);
+        b.on('render the screen', b.recalculatePages);
         b.on('render the screen', b.showPageInfo);
 
         window.onload = function () { 
@@ -238,9 +239,35 @@ var bookbinder = (function () {
             console.log("scrolling");
         };
 
+        window.onmousemove = function () {
+            // TODO
+            console.log("mouse moving");
+        };
+
+        window.onmousedown = function () {
+            // TODO
+            console.log("mouse down");
+        };
+
+        window.onmouseup = function () {
+            // TODO
+            console.log("mouse up");
+        };
+
+        window.onmouseout = function () {
+            // TODO
+            console.log("mouse out");
+        };
+
+        window.onmouseover = function () {
+            // TODO
+            console.log("mouse over");
+        };
+
         window.onresize = function () {
             b.fire('render the screen');
         };
+
         
         //Register the keydown event handlers:
         document.onkeyup = function (e) {
