@@ -207,6 +207,20 @@ var bookbinder = (function () {
 
             //given this info, calculate the new page numbers and page total.
 
+            return undefined;
+
+        };
+
+        b.normalizePage = function () {
+            // * TODO
+            var offset = b.pageOffset(),
+                width = pageWidth;
+
+            // given the offset and the page width, figure out where the page should be
+            // then make a shiftHorizontally call to align the text
+            // PLANNED: use this technique to allow pageLeft and pageRight scroll based on columns,
+            //          rather than pageWidth.
+
         };
 
         b.on('window load', b.toVisibleBook);
