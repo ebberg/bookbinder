@@ -1,17 +1,8 @@
-// Bookbinder.
-// author = ["eric", "berg"]
-// email = copyright[0] + "@" + author[1] + "d.net"
-
 var bookbinder = (function () {
 
-    // silly MVC
-
-    // 'controller'
-    function eventuality (that) {
-        // adds methods that process events.
-        // JavaScript: The Good Parts
-        // API: fire, on
-
+    function events (that) {
+        // via _JavaScript: The Good Parts_
+        // by Douglass Crockford
         var that = that || {};
         var registry = {}; // type: {'string': [{ 'method': function or string, 'parameters': array }] }
 
@@ -58,34 +49,8 @@ var bookbinder = (function () {
     };
 
 
-
-    // 'view'
-    function transforming (that) {
-        // adds methods that manipulate the DOM.
-        // API: changeID, addClassTo, shiftLeft, shiftRight
-
+    function animations (that) {
         var that = that || {};
-
-        that.renderScreen = function () {
-            return undefined;
-        };
-
-        that.addClassIn = function (classDOM, idDOM) {
-            return undefined;
-        };
-
-        that.removeClassIn = function (classDOM, idDOM) {
-            return undefined;
-        };
-
-        that.changeID = function (before, after) {
-            errorID = document.getElementById(before);
-            if (errorID !== null) {
-                errorID.setAttribute("id", after);
-            } else {
-                return("Error: No " + before + " ID");
-            }
-        };
 
         that.animate = function (elem, style, unit, from, to, time) {
             // TODO: probably chuck this function
@@ -117,72 +82,166 @@ var bookbinder = (function () {
             }
         };
 
+        that.fadeIn = function (id) {
+            return undefined;
+        };
+
+        that.fadeOut = function (id) {
+            return undefined;
+        };
+
         return that;
 
     };
 
 
-
-    // 'model'
-    function remembering (that) {
-        // add CRUD operations for browser window state
-        
+    function actions (that) {        
         var b = that || {};
 
-        b.currentWidth = function () {
+        b = animations(b);
+
+        b.textWidth = function () {
             return window.scrollMaxX;
         };
 
-        b.currentHeight = function () {
-            return window.scrollMaxY;
+        b.textHeight = function () {
+            return window.innerHeight;
         };
 
-        b.currentPageWidth = function () {
+        b.pageWidth = function () {
             return window.innerWidth;
         };
 
-        b.currentPageHeight = function () {
-            return window.innerHeight;
+        b.pageOffset = function () {
+            // TODO: IE8 support. detect document.body.scrollLeft
+            return window.pageXOffset;
         };
+
+        b.addClassIn = function (classDOM, idDOM) {
+            return undefined;
+        };
+
+        b.removeClassIn = function (classDOM, idDOM) {
+            return undefined;
+        };
+
+        b.changeID = function (before, after) {
+            errorID = document.getElementById(before);
+            if (errorID !== null) {
+                errorID.setAttribute("id", after);
+            } else {
+                return("Error: No " + before + " ID");
+            }
+        };
+
+        b.pageRight = function () {
+            b.shiftHorizontally(b.pageWidth(), "right");
+            // TODO: hook into bookMemory
+        };
+
+        b.pageLeft = function () {
+            b.shiftHorizontally(b.pageWidth(), "left");
+            // TODO: hook into bookMemory
+        };
+
+        b.setBookHeight = function () {
+            calculatedHeight = b.textHeight() / 1.25;
+            document.getElementById("text").style.height = calculatedHeight + "px";
+        }
+        
+        b.toVisibleBook = function () {
+            b.changeID("warning", "warning-display-off");
+            b.changeID("text-display-off", "text");
+        };
+
 
         return b;
     };
 
 
-    // Bookbinder-specific MVC methods
-
-    function bookEvents (that) {
-        // add bookbinder's events
+    function book (that) {
 
         var b = that || {};
 
+        var pageNumber = -1,
+            pageTotal = -1,
+            pageWidth = -1,
+            textOffset = -1;
+
+        b = events(b);
+        b = actions(b);
+
+        b.initBook = function () {
+            pageNumber = 1;
+            pagesTotal = b.currentPagesTotal();
+            pageWidth = b.currentPageWidth();
+            return(pageNumber + " out of " + pagesTotal);
+        };
+
+        b.showPageInfo = function () {
+            // TODO: print out pageNumber of pageTotal in div#pageinfo
+            return undefined;
+        };
+
+        b.currentPageTotal = function () {
+            return Math.floor( (b.currentWidth() / b.currentPageWidth()) + 1);
+        };
+
+        b.currentPageNumber = function () {
+            if (pageNumber > 0) {
+                return pageNumber;
+            } else {
+                throw {
+                    name: 'TypeError',
+                    message: 'Page Numbers must be positive'
+                };
+            }
+        };
+
+        b.recalculatePages = function () {
+            // TODO
+            var oldPN = pagesNumber,
+                oldPT = pagesTotal,
+                oldPW = pageWidth,
+                newPW = b.currentPageWidth();
+
+            //given this info, calculate the new page numbers and page total.
+
+        };
 
         b.on('window load', b.toVisibleBook);
         b.on('window load', b.initBook);
         b.on('render the screen', b.setBookHeight);
+        b.on('render the screen', b.showPageInfo);
 
         window.onload = function () { 
             b.fire('window load');
             b.fire('render the screen');
         };
+
+        window.onscroll = function () {
+            // TODO
+            console.log("scrolling");
+        };
+
         window.onresize = function () {
             b.fire('render the screen');
         };
         
-        //Register the keydown event handler:
+        //Register the keydown event handlers:
         document.onkeyup = function (e) {
             switch (e.keyCode) {
                 case 37:
-                    b.prev();
+                    b.pageLeft();
                     break;
                 case 39:
-                    b.next();
+                    b.pageRight();
                     break;
                 case 72:
-                    b.prev();
+                    b.pageLeft();
                     break;
                 case 76:
-                    b.next();
+                    b.pageRight();
                     break;
                 default:
                     break;
@@ -206,73 +265,9 @@ var bookbinder = (function () {
 
         return b;
     };
-
-    function bookTransforms (that) {
-        // add bookbinder's transitions
-
-        var b = that || {};
-
-        b.setBookHeight = function () {
-            calculatedHeight = b.currentPageHeight() / 1.25;
-            document.getElementById("text").style.height = calculatedHeight + "px";
-        }
-        
-        b.toVisibleBook = function () {
-            b.changeID("warning", "warning-display-off");
-            b.changeID("text-display-off", "text");
-        };
-
-        b.next = function () {
-            b.shiftHorizontally(b.currentPageWidth(), "right");
-            // TODO: hook into bookMemory
-        };
-
-        b.prev = function () {
-            b.shiftHorizontally(b.currentPageWidth(), "left");
-            // TODO: hook into bookMemory
-        };
-
-        return b;
-    };
-
-    function bookMemory (that) {
-        // add bookbinder's CRUD
-
-        var pageNumber = -1,
-            pagesTotal = -1,
-            pageWidth = -1;
-
-        var b = that || {};
-
-        b.initBook = function () {
-            pageNumber = 1;
-            pagesTotal = b.currentPagesTotal();
-            pageWidth = b.currentPageWidth();
-            return(pageNumber + " out of " + pagesTotal);
-        };
-
-        b.currentPagesTotal = function () {
-            return Math.floor( (b.currentWidth() / b.currentPageWidth()) + 1);
-        };
-
-        b.currentPage = function () {
-            if (pageNumber > 0) {
-                return pageNumber;
-            } else {
-                throw {
-                    name: 'TypeError',
-                    message: 'Page Numbers must be positive'
-                };
-            }
-        };
-
-        return b;
-    };
     
-    // Compose Bookbinder out of parts
-    var b = bookEvents(bookTransforms(bookMemory(
-            eventuality(transforming(remembering())))));
+    var bb = book();
 
-    return b;
+    return bb;
 
 }());
