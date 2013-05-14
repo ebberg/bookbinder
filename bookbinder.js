@@ -101,7 +101,12 @@ var bookbinder = (function () {
         b = animations(b);
 
         b.getTextWidth = function () {
-            return document.body.scrollWidth;
+            // Firefox vs. Chrome
+            if (window.scrollMaxX) {
+                return window.scrollMaxX;
+            } else {
+                return document.body.scrollWidth;
+            }
         };
 
         b.getTextHeight = function () {
