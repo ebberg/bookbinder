@@ -101,7 +101,7 @@ var bookbinder = (function () {
         b = animations(b);
 
         b.getTextWidth = function () {
-            return window.scrollMaxX;
+            return document.body.scrollWidth;
         };
 
         b.getTextHeight = function () {
@@ -166,15 +166,26 @@ var bookbinder = (function () {
         b = actions(b);
 
         b.pageRight = function () {
-            b.shiftHorizontally(pageWidth, "right");
+            if (pageNumber == pageTotal) {
+                console.log('last page');
+            } else {
+                b.shiftHorizontally(pageWidth, "right");
+                pageNumber = pageNumber + 1;
+            }
         };
 
         b.pageLeft = function () {
-            b.shiftHorizontally(pageWidth, "left");
+            if (pageNumber == 1) {
+                console.log('first page');
+            } else {
+                b.shiftHorizontally(pageWidth, "left");
+                pageNumber = pageNumber - 1;
+            }
         };
 
         b.showPageInfo = function () {
             // TODO: print out pageNumber of pageTotal in div#pageinfo
+            console.log(pageNumber + " of " + pageTotal);
             return undefined;
         };
 
@@ -228,6 +239,7 @@ var bookbinder = (function () {
         b.on('render the screen', b.setBookHeight);
         b.on('render the screen', b.recalculatePages);
         b.on('render the screen', b.showPageInfo);
+        b.on('scrolling', b.showPageInfo);
 
         window.onload = function () { 
             b.fire('window load');
@@ -235,33 +247,32 @@ var bookbinder = (function () {
         };
 
         window.onscroll = function () {
-            // TODO
-            console.log("scrolling");
+            b.fire('scrolling');
         };
 
         window.onmousemove = function () {
             // TODO
-            console.log("mouse moving");
+            //console.log("mouse moving");
         };
 
         window.onmousedown = function () {
             // TODO
-            console.log("mouse down");
+            //console.log("mouse down");
         };
 
         window.onmouseup = function () {
             // TODO
-            console.log("mouse up");
+            //console.log("mouse up");
         };
 
         window.onmouseout = function () {
             // TODO
-            console.log("mouse out");
+            //console.log("mouse out");
         };
 
         window.onmouseover = function () {
             // TODO
-            console.log("mouse over");
+            //console.log("mouse over");
         };
 
         window.onresize = function () {
